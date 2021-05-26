@@ -265,6 +265,7 @@ def obtainDataDict(PRICEAREA, TARGETNAME, weeklySequence=False, dailySequence=Fa
     if dailySequence:
         shiftWeather = 24
     shiftProg = 24
+    
     df = readData() #reading data
     df = cleanData(df, shiftWeather, shiftProg) #removing empty cells, linearly extrapolating
     df, allcols = extractPriceArea(df, PRICEAREA) #extracting values of SE1
@@ -278,20 +279,14 @@ def obtainDataDict(PRICEAREA, TARGETNAME, weeklySequence=False, dailySequence=Fa
         obs_steps = 168
         f_steps = 240
         sequences, targets = weeklySequencing(df, obs_steps, f_steps)
-        #print(sequences[0])
-        #print(targets[0])
-        #print(sequences[-1])
-        #print(targets[-1])
+
 
     if dailySequence:
         print("\n----DAILY SEQUENCING----\n") 
         obs_steps = 24
         f_steps = 240
         sequences, targets = dailySequencing(df, obs_steps, f_steps)
-        #print(sequences[0])
-        #print(targets[0])
-        #print(sequences[-1])
-        #print(targets[-1])
+
 
     dataDict = dataSplit(sequences, targets)
     return df, dataDict, targetScaler
