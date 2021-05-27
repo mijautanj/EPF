@@ -11,7 +11,10 @@ from tensorflow.keras.layers import LSTM
 
 #Helpfunctions imports
 from helpFunc.sequenceData import obtainDataDict, extractValuesLSTM
-from helpFunc.metrics import *
+from helpFunc.ancillaryFunctions import evaluate, minMaxLoss
+from helpFunc.metrics import MAE, sMAPE, MAPE, RMSE
+from helpFunc.plots import plotLossFunction,plotWorstBest, plotAllPred
+
 
 
 
@@ -26,11 +29,17 @@ class LSTM_class():
                  lossMetric,
                  epochs,
                  learningRate,
+                 patience,
                  priceArea,
                  targetName,
                  dailySequence,
-                 weeklySequence):
+                 weeklySequence,
+                 verboseTraining,
+                 plotLoss,
+                 plotWorstBestPrediction,
+                 plotAllPredictions):
 
+        self.modelName="LSTM"
         self.n_hidden1 = n_hidden1
         self.n_hidden2 = n_hidden2
         self.dropout1 = dropout1
@@ -39,10 +48,15 @@ class LSTM_class():
         self.epochs = epochs
         self.learningRate = learningRate
         self.lossMetric = lossMetric
+        self.patience=patience
         self.priceArea=priceArea
         self.targetName=targetName
         self.dailySequence=dailySequence
         self.weeklySequence=weeklySequence
+        self.verboseTraining=verboseTraining
+        self.plotLoss=plotLoss
+        self.plotWorstBestPrediction=plotWorstBestPrediction
+        self.plotAllPredictions=plotAllPredictions
         self.__x_train, self.__x_val, self.__x_test, self.__y_train, self.__y_val, self.__y_test, self.targetScaler, self.dataDict, self.df = self.lstm_data()
         self.__model = self.lstm_model()
         
@@ -77,27 +91,26 @@ class LSTM_class():
 
     # fit lstm model
     def lstmFit(self):
-        early_stopping = EarlyStopping(patience=100, verbose=1)
-        self.__model.fit(self.__x_train, self.__y_train,
+        early_stopping = EarlyStopping(patience=self.patience, verbose=1)
+        fittedModel = self.__model.fit(self.__x_train, self.__y_train,
                        batch_size=self.batch_size,
                        epochs=self.epochs,
-                       verbose=1,
+                       verbose=self.verboseTraining,
                        callbacks=[early_stopping], 
                        shuffle=False, 
                        validation_data=(self.__x_val, self.__y_val))
-    
+        if self.plotLoss:
+            plotLossFunction(fittedModel)
 
     # evaluate lstm model
     def lstmPredict(self):
         #Fitting (training) the model
         self.lstmFit()
-
+       
         #Forecasting for all test samples
         y_hat_test = self.__model.predict(self.__x_test, batch_size=self.batch_size)
-        #Saving all predicted values and unscaling
 
-        print(len(self.dataDict["test"][1]))
-        print(y_hat_test.shape)
+        #Saving all predicted values and unscaled values in dataDict
         for i, j in enumerate(self.dataDict["test"][1]):
             predict = np.array(y_hat_test[i]).reshape(-1,1)
             j["Predicted"] = predict
@@ -106,21 +119,27 @@ class LSTM_class():
 
         return
 
-
+    def lstmEvaluate(self):
+        testMAE, errors = evaluate(self.dataDict["test"][1])
+        if self.plotWorstBestPrediction:
+            indicesMin,indicesMax = minMaxLoss(testMAE,k=2)
+            plotWorstBest(self.dataDict,self.targetName,self.modelName,indicesMin,indicesMax)
+        if self.plotAllPredictions:
+            plotAllPred(self.dataDict,self.targetName,self.modelName)
+        print(errors)
     
-    
-    #lstm_evaluation = _lstm.lstm_evaluate(plotLoss=False)
-    #print("Obtained result loss:{0} \n".format(lstm_evaluation))
-    #return lstm_evaluation
 
-
-#lstmm = LSTM_test()
-#lstm_evaluation = lstmm.lstm_evaluate()
 
 
 if __name__ == "__main__":
 
     parameters = {
+        #Verbose/vizualize settings
+        'verboseTraining': 1,
+        'plotLoss': True,
+        'plotWorstBestPrediction': True,
+        'plotAllPredictions': True,
+
         #Data parameters
         'priceArea' : 'SE1',
         'targetName' : 'SE1-price',
@@ -133,11 +152,13 @@ if __name__ == "__main__":
         'dropout1': 0.2,
         'dropout2': 0.2,
         'batch_size': 32,
-        'epochs': 1,
+        'epochs': 1000,
         'learningRate': 0.001,
-        'lossMetric' :'mae'
+        'lossMetric' :'mae',
+        'patience': 200
+   
     }
 
     _lstm = LSTM_class(**parameters)
     _lstm.lstmPredict()
-    #print(_lstm.dataDict["test"][1][0])
+    _lstm.lstmEvaluate()

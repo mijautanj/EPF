@@ -3,18 +3,18 @@ from helpFunc.metrics import *
 import matplotlib.pyplot as plt
 
 
-def minMaxLoss(self, Yp_test, Y_test):
-    print(len(Y_test))
-    loss = len(Y_test)*[None] 
-    for i in range(len(Y_test)):
-        loss[i] = MAE(Y_test, Yp_test)
-    maxIdx = loss.index(max(loss))
-    minIdx = loss.index(min(loss))
-    loss.pop(maxIdx)
-    loss.pop(minIdx)
-    secondMaxIdx = loss.index(max(loss))
-    secondMinIdx = loss.index(min(loss))
-    return maxIdx, minIdx, secondMaxIdx, secondMinIdx
+def plotLossFunction(model):
+    loss = model.history["loss"]
+    val_loss = model.history["val_loss"]
+    epochs = range(len(loss))
+    plt.figure()
+    plt.plot(epochs, loss, "b", label="Training loss")
+    plt.plot(epochs, val_loss, "r", label="Validation loss")
+    plt.title("Training and Validation Loss")
+    plt.xlabel("Epochs")
+    plt.ylabel("Loss")
+    plt.legend()
+    plt.show()
 
 
 def plotPred(df,targetName, title, directStr):
@@ -27,7 +27,25 @@ def plotPred(df,targetName, title, directStr):
     ax.set_ylabel('SEK/MWh')
     ax.legend(['Observed values','Prediction'])
 
-    plt.title(title + "for price area " + targetName)
+    plt.title(title + " predicted 10-days ahead for " + targetName)
     plt.tight_layout() 
-    plt.savefig('../plots' + directStr +'.png')
+    plt.savefig('../plots/' + directStr +'.png')
     plt.show()
+
+
+def plotWorstBest(dataDict, targetName, modelName, minIndeces, maxIndeces):
+    startString = ["", "Second ", "Third ", "Fourth "]
+    for i in range (len(minIndeces)):
+        goodPred = dataDict["test"][1][minIndeces[i]]
+        badPred = dataDict["test"][1][maxIndeces[i]]
+        titleGood = startString[i] + "Best" 
+        titleBad = startString[i] + "Worst" 
+        plotPred(goodPred, targetName, titleGood, modelName+"_pred_good" + str(i+1))
+        plotPred(badPred, targetName, titleBad, modelName+"_pred_bad" + str(i+1))
+    
+    return
+
+def plotAllPred(dataDict, targetName, modelName):
+    for i, j in enumerate(dataDict["test"][1]):
+        plotPred(j, targetName, "Test "+str(i+1), modelName+"_pred_test")
+    return
