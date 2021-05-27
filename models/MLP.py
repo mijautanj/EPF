@@ -117,7 +117,7 @@ class MLP_class():
                        shuffle=False, 
                        validation_data=(self.__x_val, self.__y_val))
         if self.plotLoss:
-            plotLossFunction(fittedModel)
+            plotLossFunction(fittedModel, self.modelName)
 
     # evaluate mlp model
     def mlpPredict(self):
@@ -164,9 +164,9 @@ if __name__ == "__main__":
         'weeklySequence': True,
 
         #Network/training parameters
-        'n_hidden1': 1024,
-        'n_hidden2': 1024,
-        'n_hidden3': 512,
+        'n_hidden1': 512,
+        'n_hidden2': 128,
+        'n_hidden3': 64,
         'dropout1': 0.3,
         'dropout2': 0.3,
         'dropout3': 0.3,

@@ -3,18 +3,19 @@ from helpFunc.metrics import *
 import matplotlib.pyplot as plt
 
 
-def plotLossFunction(model):
+def plotLossFunction(model, modelName):
     loss = model.history["loss"]
     val_loss = model.history["val_loss"]
     epochs = range(len(loss))
     plt.figure()
     plt.plot(epochs, loss, "b", label="Training loss")
     plt.plot(epochs, val_loss, "r", label="Validation loss")
-    plt.title("Training and Validation Loss")
+    plt.title(modelName + " training and validation Loss")
     plt.xlabel("Epochs")
     plt.ylabel("Loss")
     plt.legend()
-    plt.show()
+    plt.savefig('../plots/' + modelName +'_loss.png')
+    #plt.show()
 
 
 def plotPred(df,targetName, title, directStr):
@@ -30,7 +31,7 @@ def plotPred(df,targetName, title, directStr):
     plt.title(title + " predicted 10-days ahead for " + targetName)
     plt.tight_layout() 
     plt.savefig('../plots/' + directStr +'.png')
-    plt.show()
+    #plt.show()
 
 
 def plotWorstBest(dataDict, targetName, modelName, minIndeces, maxIndeces):
@@ -43,9 +44,9 @@ def plotWorstBest(dataDict, targetName, modelName, minIndeces, maxIndeces):
         plotPred(goodPred, targetName, titleGood, modelName+"_pred_good" + str(i+1))
         plotPred(badPred, targetName, titleBad, modelName+"_pred_bad" + str(i+1))
     
-    return
+    
 
 def plotAllPred(dataDict, targetName, modelName):
     for i, j in enumerate(dataDict["test"][1]):
-        plotPred(j, targetName, "Test "+str(i+1), modelName+"_pred_test")
-    return
+        plotPred(j, targetName, " EXAMPLE: "+str(i+1), "/massplots/" + str(i+1) + " " + modelName+"_pred_example")
+    

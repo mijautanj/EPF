@@ -100,7 +100,7 @@ class LSTM_class():
                        shuffle=False, 
                        validation_data=(self.__x_val, self.__y_val))
         if self.plotLoss:
-            plotLossFunction(fittedModel)
+            plotLossFunction(fittedModel, self.modelName)
 
     # evaluate lstm model
     def lstmPredict(self):
