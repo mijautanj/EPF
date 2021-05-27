@@ -7,12 +7,10 @@ from tensorflow.keras.layers import Dropout, Dense, LSTM
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import EarlyStopping
-from tensorflow.keras.layers import LSTM
 
 #Helpfunctions imports
 from helpFunc.sequenceData import obtainDataDict, extractValuesLSTM
 from helpFunc.ancillaryFunctions import evaluate, minMaxLoss
-from helpFunc.metrics import MAE, sMAPE, MAPE, RMSE
 from helpFunc.plots import plotLossFunction,plotWorstBest, plotAllPred
 
 
@@ -149,8 +147,8 @@ if __name__ == "__main__":
         #Network/training parameters
         'n_hidden1': 64,
         'n_hidden2': 64,
-        'dropout1': 0.2,
-        'dropout2': 0.2,
+        'dropout1': 0.1,
+        'dropout2': 0.1,
         'batch_size': 32,
         'epochs': 1000,
         'learningRate': 0.0001,

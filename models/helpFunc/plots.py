@@ -48,5 +48,5 @@ def plotWorstBest(dataDict, targetName, modelName, minIndeces, maxIndeces):
 
 def plotAllPred(dataDict, targetName, modelName):
     for i, j in enumerate(dataDict["test"][1]):
-        plotPred(j, targetName, " EXAMPLE: "+str(i+1), "/massplots/" + str(i+1) + " " + modelName+"_pred_example")
+        plotPred(j, targetName, " EXAMPLE: "+str(i+1), "/massplots/" + str(i+1) + "_" + modelName+"_pred_example")
     
