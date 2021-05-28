@@ -77,9 +77,9 @@ class LSTM_class():
 
         model = Sequential()
         model.add(LSTM(self.n_hidden1, input_shape=(n_steps, n_features), return_sequences=True))
-        model.add(Dropout(self.dropout1))
+        #model.add(Dropout(self.dropout1))
         model.add(LSTM(self.n_hidden2, return_sequences=False))
-        model.add(Dropout(self.dropout2))
+        #model.add(Dropout(self.dropout2))
 
         model.add(Dense(n_output))
         opt = Adam(learning_rate=self.learningRate)
@@ -150,7 +150,7 @@ if __name__ == "__main__":
         'dropout1': 0.1,
         'dropout2': 0.1,
         'batch_size': 32,
-        'epochs': 1000,
+        'epochs': 2000,
         'learningRate': 0.0001,
         'lossMetric' :'mae',
         'patience': 200

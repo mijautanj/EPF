@@ -83,7 +83,7 @@ class CNN_class():
         model = Sequential()
 
         #Convolutional layer 1
-        model.add(Conv1D(self.n_hidden1, kernel_size=3, padding='same', input_shape=(n_steps, n_features)))
+        model.add(Conv1D(self.n_hidden1, kernel_size=5, padding='same', input_shape=(n_steps, n_features)))
         #model.add(Dropout(self.dropout1))
         model.add(BatchNormalization())
         model.add(Activation('relu'))
@@ -91,6 +91,20 @@ class CNN_class():
 
         #Convolutional layer 2
         model.add(Conv1D(self.n_hidden2, kernel_size=3, padding='same'))
+        #model.add(Dropout(self.dropout2))
+        model.add(BatchNormalization())
+        model.add(Activation('relu'))
+        model.add(MaxPooling1D(pool_size=2)) #, strides=2))
+
+         #Convolutional layer 2
+        model.add(Conv1D(64, kernel_size=3, padding='same'))
+        #model.add(Dropout(self.dropout2))
+        model.add(BatchNormalization())
+        model.add(Activation('relu'))
+        model.add(MaxPooling1D(pool_size=2)) #, strides=2))
+
+         #Convolutional layer 2
+        model.add(Conv1D(64, kernel_size=3, padding='same'))
         #model.add(Dropout(self.dropout2))
         model.add(BatchNormalization())
         model.add(Activation('relu'))
@@ -173,7 +187,7 @@ if __name__ == "__main__":
         'weeklySequence': True,
 
         #Network/training parameters
-        'n_hidden1': 128,
+        'n_hidden1': 64,
         'n_hidden2': 64,
         'n_hidden3': 64,
         'dropout1': 0.01,

@@ -6,17 +6,17 @@ def evaluate(ytest):
     test_mape = []
     test_rmse = []
     for i in ytest: #For output in validation set 
-        test_smape.append(sMAPE(i["Target"],i["Predicted"]))
-        test_mae.append(MAE(i["Target"],i["Predicted"]))
-        test_mape.append(MAPE(i["Target"],i["Predicted"]))
-        test_rmse.append(RMSE(i["Target"],i["Predicted"]))
+        test_smape.append(sMAPE(i["Target"],i["Pred-Unscaled"]))
+        test_mae.append(MAE(i["Target"],i["Pred-Unscaled"]))
+        test_mape.append(MAPE(i["Target"],i["Pred-Unscaled"]))
+        test_rmse.append(RMSE(i["Target"],i["Pred-Unscaled"]))
 
 
     errors = {
-    "test_smape": np.mean(test_smape),
     "test_mae": np.mean(test_mae),
-    "test_mape": np.mean(test_mape),
-    "test_rmse": np.mean(test_rmse)
+    "test_smape": np.mean(test_smape),
+    "test_rmse": np.mean(test_rmse),
+    "test_mape": np.mean(test_mape)
     }
 
     return test_mae, errors
