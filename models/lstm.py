@@ -130,6 +130,7 @@ class LSTM_class():
 
 
 if __name__ == "__main__":
+    print("*****------------Running LSTM-------------******\n")
 
     parameters = {
         #Verbose/vizualize settings
@@ -160,3 +161,4 @@ if __name__ == "__main__":
     _lstm = LSTM_class(**parameters)
     _lstm.lstmPredict()
     _lstm.lstmEvaluate()
+    print("*****------------LSTM FINISHED------------******\n")

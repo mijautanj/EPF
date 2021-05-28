@@ -1,8 +1,7 @@
 from pmdarima import auto_arima
 import warnings
 from statsmodels.tsa.stattools import adfuller
-from helpFunc.sequenceData import *
-from helpFunc.metrics import *
+from helpFunc.sequenceData import obtainDataDict
 warnings.filterwarnings("ignore")
 
 from helpFunc.ancillaryFunctions import evaluate, minMaxLoss
@@ -39,7 +38,7 @@ if __name__ == "__main__":
     #ad_test(df[TARGETNAME])
 
     newDataDict = prediction(dataDict)
-    ptestMAE, errors = evaluate(newDataDict["test"][1])
+    testMAE, errors = evaluate(newDataDict["test"][1])
     print(errors)
 
     plotWorstBestPrediction = True

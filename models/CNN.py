@@ -172,6 +172,7 @@ class CNN_class():
 
 
 if __name__ == "__main__":
+    print("*****------------Running CNN-------------******\n")
 
     parameters = {
         #Verbose/vizualize settings
@@ -204,4 +205,5 @@ if __name__ == "__main__":
     _cnn = CNN_class(**parameters)
     _cnn.cnnPredict()
     _cnn.cnnEvaluate()
-    _cnn.dataDict["test"][1][0]
+    print("*****------------CNN FINISHED------------******\n")
+   

@@ -148,6 +148,7 @@ class MLP_class():
 
 
 if __name__ == "__main__":
+    print("*****------------Running MLP-------------******\n")
 
     parameters = {
         #Verbose/vizualize settings
@@ -180,3 +181,4 @@ if __name__ == "__main__":
     _mlp = MLP_class(**parameters)
     _mlp.mlpPredict()
     _mlp.mlpEvaluate()
+    print("*****------------MLP FINISHED------------******\n")
