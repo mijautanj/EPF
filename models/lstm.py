@@ -81,7 +81,9 @@ class LSTM_class():
 
         model = Sequential()
         model.add(LSTM(self.n_hidden1, input_shape=(n_steps, n_features), return_sequences=True))
+        model.add(Dropout(0.3))
         model.add(LSTM(self.n_hidden2, return_sequences=False))
+        model.add(Dropout(0.3))
 
         model.add(Dense(n_output))
         opt = Adam(learning_rate=self.learningRate)
@@ -164,10 +166,10 @@ if __name__ == "__main__":
 
         #Network/training parameters
         'n_hidden1': 64,
-        'n_hidden2': 32,
-        'batch_size': 32,
-        'epochs': 600,
-        'learningRate': 0.0001,
+        'n_hidden2': 64,
+        'batch_size': 64,
+        'epochs': 800,
+        'learningRate': 0.001,
         'lossMetric' :'mae',
         'patience': 300
    
