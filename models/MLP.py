@@ -183,14 +183,14 @@ if __name__ == "__main__":
         'n_hidden1': 512,
         'n_hidden2': 128,
         'n_hidden3': 64,
-        'dropout1': 0.001,
-        'dropout2': 0.001,
-        'dropout3': 0.001,
-        'batch_size': 32,
-        'epochs': 2,
-        'learningRate': 0.0001,
+        'dropout1': 0.3,
+        'dropout2': 0.1,
+        'dropout3': 0.1,
+        'batch_size': 64,
+        'epochs': 800,
+        'learningRate': 0.01,
         'lossMetric' :'mae',
-        'patience': 200
+        'patience': 300
    
     }
 

@@ -12,6 +12,7 @@ def plotPred(df,targetName, title, directStr):
     ax.set_xlabel('Date')
     ax.set_ylabel('SEK/MWh')
     ax.legend(['Observed values','Prediction'])
+    #ax.set_ylim([150,350])
 
     plt.title(title + " predicted 10-days ahead for " + targetName)
     plt.tight_layout() 
@@ -32,7 +33,8 @@ def plotWorstBest(dataDict, targetName, modelName, minIndeces, maxIndeces):
 
 #A function to load models and plot best and worst
 if __name__ == "__main__":
-    modelstring = "LSTM_0.015022__NH1_64__NH2_32__EPOCHS_800__BS_64__LR_0.0001__PAT_300__DAY_False__WEEK_True"
+    modelstring = "LSTM_0.015264__NH1_64__NH2_64__DROP1_0.3__DROP2_0.3__EPOCHS_800__BS_64__LR_0.001__PAT_300__DAY_True__WEEK_False"
+    
     file = open("./savedModels/" + modelstring + ".pkl", "rb")
     output = pickle.load(file)
     print("FINAL VALLOSS", output["finalValLoss"])

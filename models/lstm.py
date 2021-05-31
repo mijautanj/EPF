@@ -21,6 +21,8 @@ class LSTM_class():
     def __init__(self,
                  n_hidden1, 
                  n_hidden2,
+                 dropout1,
+                 dropout2,
                  batch_size,
                  lossMetric,
                  epochs,
@@ -42,6 +44,8 @@ class LSTM_class():
         self.modelName="LSTM"
         self.n_hidden1 = n_hidden1
         self.n_hidden2 = n_hidden2
+        self.dropout1 = dropout1
+        self.dropout2 = dropout2
         self.batch_size = batch_size
         self.epochs = epochs
         self.learningRate = learningRate
@@ -81,9 +85,9 @@ class LSTM_class():
 
         model = Sequential()
         model.add(LSTM(self.n_hidden1, input_shape=(n_steps, n_features), return_sequences=True))
-        model.add(Dropout(0.3))
+        model.add(Dropout(self.dropout1))
         model.add(LSTM(self.n_hidden2, return_sequences=False))
-        model.add(Dropout(0.3))
+        model.add(Dropout(self.dropout2))
 
         model.add(Dense(n_output))
         opt = Adam(learning_rate=self.learningRate)
@@ -135,6 +139,8 @@ class LSTM_class():
         paramDict = {
             "NH1": self.n_hidden1,
             "NH2": self.n_hidden2,
+            "DROP1": self.dropout1,
+            "DROP2": self.dropout2,
             "EPOCHS": self.epochs,
             "BS": self.batch_size,
             "LR": self.learningRate,
@@ -161,14 +167,16 @@ if __name__ == "__main__":
         #Data parameters
         'priceArea' : 'SE1',
         'targetName' : 'SE1-price',
-        'dailySequence': False,
-        'weeklySequence': True,
+        'dailySequence': True,
+        'weeklySequence': False,
 
         #Network/training parameters
         'n_hidden1': 64,
         'n_hidden2': 64,
+        'dropout1': 0.3,
+        'dropout2': 0.3,
         'batch_size': 64,
-        'epochs': 800,
+        'epochs': 1000,
         'learningRate': 0.001,
         'lossMetric' :'mae',
         'patience': 300
