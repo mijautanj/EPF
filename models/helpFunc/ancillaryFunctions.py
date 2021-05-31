@@ -1,4 +1,5 @@
 from helpFunc.metrics import *
+import pickle
 
 def evaluate(ytest):
     test_smape = []
@@ -29,3 +30,22 @@ def minMaxLoss(testMAE, k=2):
     idxMax = np.argpartition(A, -k)
 
     return idxMin[:k], idxMax[-k:]
+
+
+def saveModel(dataDict, targetName, modelName, indicesMin, indicesMax, errors, finalValLoss, paramDict):
+    modelstring = modelName + "_" + str(round(finalValLoss, 6))
+    for key, value in paramDict.items():
+        modelstring += "__" + str(key) + "_" + str(value)
+
+    saveDict = {"dataDict": dataDict,
+            "targetName": targetName,
+            "modelName": modelName,
+            "indicesMin": indicesMin,
+            "indicesMax": indicesMax,
+            "errors": errors,
+            "finalValLoss": finalValLoss,
+            "paramDict":  paramDict}
+    
+    file = open("../savedModels/" + modelstring + ".pkl", "wb")
+    pickle.dump(saveDict, file)
+    file.close()

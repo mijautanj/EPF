@@ -10,7 +10,7 @@ from tensorflow.keras.callbacks import EarlyStopping
 
 #Helpfunctions imports
 from helpFunc.sequenceData import obtainDataDict, extractValuesLSTM
-from helpFunc.ancillaryFunctions import evaluate, minMaxLoss
+from helpFunc.ancillaryFunctions import evaluate, minMaxLoss, saveModel
 from helpFunc.plots import plotLossFunction,plotWorstBest, plotAllPred
 
 
@@ -21,8 +21,6 @@ class LSTM_class():
     def __init__(self,
                  n_hidden1, 
                  n_hidden2,
-                 dropout1,
-                 dropout2,
                  batch_size,
                  lossMetric,
                  epochs,
@@ -35,13 +33,15 @@ class LSTM_class():
                  verboseTraining,
                  plotLoss,
                  plotWorstBestPrediction,
-                 plotAllPredictions):
+                 plotAllPredictions,
+                 errors=None,
+                 finalValLoss=None,
+                 indicesMin=None,
+                 indicesMax=None):
 
         self.modelName="LSTM"
         self.n_hidden1 = n_hidden1
         self.n_hidden2 = n_hidden2
-        self.dropout1 = dropout1
-        self.dropout2 = dropout2
         self.batch_size = batch_size
         self.epochs = epochs
         self.learningRate = learningRate
@@ -49,6 +49,10 @@ class LSTM_class():
         self.patience=patience
         self.priceArea=priceArea
         self.targetName=targetName
+        self.errors = errors
+        self.finalValLoss = finalValLoss
+        self.indicesMin = indicesMin 
+        self.indicesMax = indicesMax
         self.dailySequence=dailySequence
         self.weeklySequence=weeklySequence
         self.verboseTraining=verboseTraining
@@ -77,9 +81,7 @@ class LSTM_class():
 
         model = Sequential()
         model.add(LSTM(self.n_hidden1, input_shape=(n_steps, n_features), return_sequences=True))
-        #model.add(Dropout(self.dropout1))
         model.add(LSTM(self.n_hidden2, return_sequences=False))
-        #model.add(Dropout(self.dropout2))
 
         model.add(Dense(n_output))
         opt = Adam(learning_rate=self.learningRate)
@@ -99,6 +101,7 @@ class LSTM_class():
                        validation_data=(self.__x_val, self.__y_val))
         if self.plotLoss:
             plotLossFunction(fittedModel, self.modelName)
+        self.finalValLoss = fittedModel.history["val_loss"][-1]
 
     # evaluate lstm model
     def lstmPredict(self):
@@ -118,14 +121,28 @@ class LSTM_class():
 
     def lstmEvaluate(self):
         testMAE, errors = evaluate(self.dataDict["test"][1])
-        print(errors)
+        self.errors = errors
+        print(self.errors)
         if self.plotWorstBestPrediction:
-            indicesMin,indicesMax = minMaxLoss(testMAE,k=2)
-            plotWorstBest(self.dataDict,self.targetName,self.modelName,indicesMin,indicesMax)
+            self.indicesMin,self.indicesMax = minMaxLoss(testMAE,k=2)
+            plotWorstBest(self.dataDict,self.targetName,self.modelName,self.indicesMin,self.indicesMax)
         if self.plotAllPredictions:
             plotAllPred(self.dataDict,self.targetName,self.modelName)
         
-    
+    def lstmSave(self):
+        paramDict = {
+            "NH1": self.n_hidden1,
+            "NH2": self.n_hidden2,
+            "EPOCHS": self.epochs,
+            "BS": self.batch_size,
+            "LR": self.learningRate,
+            "PAT": self.patience,
+            "DAY": self.dailySequence,
+            "WEEK": self.weeklySequence
+        }
+        
+        saveModel(self.dataDict, self.targetName, self.modelName, self.indicesMin, 
+        self.indicesMax, self.errors, self.finalValLoss, paramDict)
 
 
 
@@ -147,18 +164,17 @@ if __name__ == "__main__":
 
         #Network/training parameters
         'n_hidden1': 64,
-        'n_hidden2': 64,
-        'dropout1': 0.1,
-        'dropout2': 0.1,
+        'n_hidden2': 32,
         'batch_size': 32,
-        'epochs': 2000,
+        'epochs': 600,
         'learningRate': 0.0001,
         'lossMetric' :'mae',
-        'patience': 200
+        'patience': 300
    
     }
 
     _lstm = LSTM_class(**parameters)
     _lstm.lstmPredict()
     _lstm.lstmEvaluate()
+    _lstm.lstmSave()
     print("*****------------LSTM FINISHED------------******\n")

@@ -1,6 +1,7 @@
 
 from helpFunc.metrics import *
 import matplotlib.pyplot as plt
+plt.rcParams.update({'font.size': 20})
 
 
 def plotLossFunction(model, modelName):
@@ -9,7 +10,7 @@ def plotLossFunction(model, modelName):
     epochs = range(len(loss))
     plt.figure()
     plt.plot(epochs, loss, "b", label="Training loss")
-    plt.plot(epochs, val_loss, "r", label="Validation loss")
+    plt.plot(epochs, val_loss, "r--", label="Validation loss")
     plt.title(modelName + " training and validation Loss")
     plt.xlabel("Epochs")
     plt.ylabel("Loss")
@@ -20,9 +21,10 @@ def plotLossFunction(model, modelName):
 
 def plotPred(df,targetName, title, directStr):
     #Plot actual values of week-df
+    #color='#174D7F'
     ax = df[['Target', 'DateTime']].plot(x='DateTime', legend="observed", color='#174D7F',figsize=(16,5.5))
     #Plot predicted values of week-df
-    df.plot(x='DateTime', y='Pred-Unscaled', ax=ax, color="r")
+    df.plot(x='DateTime', y='Pred-Unscaled', ax=ax, color="r", style='--')
 
     ax.set_xlabel('Date')
     ax.set_ylabel('SEK/MWh')

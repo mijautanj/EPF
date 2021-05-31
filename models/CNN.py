@@ -11,7 +11,7 @@ from tensorflow.keras.callbacks import EarlyStopping
 
 #Helpfunctions imports
 from helpFunc.sequenceData import obtainDataDict, extractValuesLSTM
-from helpFunc.ancillaryFunctions import evaluate, minMaxLoss
+from helpFunc.ancillaryFunctions import evaluate, minMaxLoss, saveModel
 from helpFunc.plots import plotLossFunction,plotWorstBest, plotAllPred
 
 
@@ -38,7 +38,11 @@ class CNN_class():
                  verboseTraining,
                  plotLoss,
                  plotWorstBestPrediction,
-                 plotAllPredictions):
+                 plotAllPredictions,
+                 errors=None,
+                 finalValLoss=None,
+                 indicesMin=None,
+                 indicesMax=None):
 
         self.modelName="CNN"
         self.n_hidden1 = n_hidden1
@@ -54,6 +58,10 @@ class CNN_class():
         self.patience=patience
         self.priceArea=priceArea
         self.targetName=targetName
+        self.errors = errors
+        self.finalValLoss = finalValLoss
+        self.indicesMin = indicesMin 
+        self.indicesMax = indicesMax
         self.dailySequence=dailySequence
         self.weeklySequence=weeklySequence
         self.verboseTraining=verboseTraining
@@ -83,12 +91,13 @@ class CNN_class():
         model = Sequential()
 
         #Convolutional layer 1
-        model.add(Conv1D(self.n_hidden1, kernel_size=5, padding='same', input_shape=(n_steps, n_features)))
+        model.add(Conv1D(self.n_hidden1, kernel_size=3, padding='same', input_shape=(n_steps, n_features)))
         #model.add(Dropout(self.dropout1))
         model.add(BatchNormalization())
         model.add(Activation('relu'))
-        model.add(MaxPooling1D(pool_size=3)) #, strides=2))
+        model.add(MaxPooling1D(pool_size=2)) #, strides=2))
 
+    
         #Convolutional layer 2
         model.add(Conv1D(self.n_hidden2, kernel_size=3, padding='same'))
         #model.add(Dropout(self.dropout2))
@@ -96,32 +105,19 @@ class CNN_class():
         model.add(Activation('relu'))
         model.add(MaxPooling1D(pool_size=2)) #, strides=2))
 
-         #Convolutional layer 2
-        model.add(Conv1D(64, kernel_size=3, padding='same'))
-        #model.add(Dropout(self.dropout2))
-        model.add(BatchNormalization())
-        model.add(Activation('relu'))
-        model.add(MaxPooling1D(pool_size=2)) #, strides=2))
-
-         #Convolutional layer 2
-        model.add(Conv1D(64, kernel_size=3, padding='same'))
-        #model.add(Dropout(self.dropout2))
-        model.add(BatchNormalization())
-        model.add(Activation('relu'))
-        model.add(MaxPooling1D(pool_size=2)) #, strides=2))
 
         #Convolutional layer 3
         model.add(Conv1D(self.n_hidden3, kernel_size=3, padding='same'))
         #model.add(Dropout(self.dropout3))
         model.add(BatchNormalization())
         model.add(Activation('relu'))
-        model.add(MaxPooling1D(pool_size=1)) #, strides=2))
+        model.add(MaxPooling1D(pool_size=2)) #, strides=2))
 
 
         # Fully connected 
         model.add(Flatten())
         model.add(Dense(64, activation = 'relu'))
-    
+
         # Output 
         model.add(Dense(n_output))
         opt = Adam(learning_rate=self.learningRate)
@@ -129,7 +125,7 @@ class CNN_class():
         return model
     
 
-    # fit lstm model
+    # fit cnn model
     def cnnFit(self):
         early_stopping = EarlyStopping(patience=self.patience, verbose=1)
         fittedModel = self.__model.fit(self.__x_train, self.__y_train,
@@ -141,8 +137,9 @@ class CNN_class():
                        validation_data=(self.__x_val, self.__y_val))
         if self.plotLoss:
             plotLossFunction(fittedModel, self.modelName)
+        self.finalValLoss = fittedModel.history["val_loss"][-1]
 
-    # evaluate lstm model
+    # evaluate cnn model
     def cnnPredict(self):
         #Fitting (training) the model
         self.cnnFit()
@@ -161,13 +158,29 @@ class CNN_class():
     def cnnEvaluate(self):
         testMAE, errors = evaluate(self.dataDict["test"][1])
         print(errors)
+        self.errors=errors
         if self.plotWorstBestPrediction:
-            indicesMin,indicesMax = minMaxLoss(testMAE,k=2)
-            plotWorstBest(self.dataDict,self.targetName,self.modelName,indicesMin,indicesMax)
+            self.indicesMin,self.indicesMax = minMaxLoss(testMAE,k=2)
+            plotWorstBest(self.dataDict,self.targetName,self.modelName,self.indicesMin,self.indicesMax)
         if self.plotAllPredictions:
             plotAllPred(self.dataDict,self.targetName,self.modelName)
         
-    
+    def cnnSave(self):
+        paramDict = {
+            "NH1": self.n_hidden1,
+            "NH2": self.n_hidden2,
+            "NH3": self.n_hidden3,
+            "FullyConnected": 64,
+            "EPOCHS": self.epochs,
+            "BS": self.batch_size,
+            "LR": self.learningRate,
+            "PAT": self.patience,
+            "DAY": self.dailySequence,
+            "WEEK": self.weeklySequence
+        }
+
+        saveModel(self.dataDict, self.targetName, self.modelName, self.indicesMin, 
+            self.indicesMax, self.errors, self.finalValLoss, paramDict)
 
 
 
@@ -191,19 +204,20 @@ if __name__ == "__main__":
         'n_hidden1': 64,
         'n_hidden2': 64,
         'n_hidden3': 64,
-        'dropout1': 0.01,
-        'dropout2': 0.01,
-        'dropout3': 0.01,
+        'dropout1': 0.2,
+        'dropout2': 0.2,
+        'dropout3': 0.2,
         'batch_size': 64,
-        'epochs': 1000,
+        'epochs': 2,
         'learningRate': 0.001,
         'lossMetric' :'mae',
-        'patience': 200
+        'patience': 300
    
     }
 
     _cnn = CNN_class(**parameters)
     _cnn.cnnPredict()
     _cnn.cnnEvaluate()
+    _cnn.cnnSave()
     print("*****------------CNN FINISHED------------******\n")
    

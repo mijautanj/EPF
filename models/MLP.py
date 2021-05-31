@@ -10,7 +10,7 @@ from tensorflow.keras.callbacks import EarlyStopping
 
 #Helpfunctions imports
 from helpFunc.sequenceData import obtainDataDict, extractValuesMLP
-from helpFunc.ancillaryFunctions import evaluate, minMaxLoss
+from helpFunc.ancillaryFunctions import evaluate, minMaxLoss, saveModel
 from helpFunc.plots import plotLossFunction,plotWorstBest, plotAllPred
 
 
@@ -105,7 +105,7 @@ class MLP_class():
         return model
     
 
-    # fit lstm model
+    # fit mlp model
     def mlpFit(self):
         early_stopping = EarlyStopping(patience=self.patience, verbose=1)
         fittedModel = self.__model.fit(self.__x_train, self.__y_train,
@@ -117,6 +117,7 @@ class MLP_class():
                        validation_data=(self.__x_val, self.__y_val))
         if self.plotLoss:
             plotLossFunction(fittedModel, self.modelName)
+        self.finalValLoss = fittedModel.history["val_loss"][-1]
 
     # evaluate mlp model
     def mlpPredict(self):
@@ -137,13 +138,28 @@ class MLP_class():
     def mlpEvaluate(self):
         testMAE, errors = evaluate(self.dataDict["test"][1])
         print(errors)
+        self.errors = errors
         if self.plotWorstBestPrediction:
-            indicesMin,indicesMax = minMaxLoss(testMAE,k=2)
-            plotWorstBest(self.dataDict,self.targetName,self.modelName,indicesMin,indicesMax)
+            self.indicesMin,self.indicesMax = minMaxLoss(testMAE,k=2)
+            plotWorstBest(self.dataDict,self.targetName,self.modelName,self.indicesMin,self.indicesMax)
         if self.plotAllPredictions:
             plotAllPred(self.dataDict,self.targetName,self.modelName)
-        
-    
+
+
+    def mlpSave(self):
+        paramDict = {
+            "NH1": self.n_hidden1,
+            "NH2": self.n_hidden2,
+            "NH3": self.n_hidden3,
+            "EPOCHS": self.epochs,
+            "BS": self.batch_size,
+            "LR": self.learningRate,
+            "PAT": self.patience,
+            "DAY": self.dailySequence,
+            "WEEK": self.weeklySequence
+        }
+        saveModel(self.dataDict, self.targetName, self.modelName, self.indicesMin, 
+            self.indicesMax, self.errors, self.finalValLoss, paramDict)
 
 
 
@@ -155,7 +171,7 @@ if __name__ == "__main__":
         'verboseTraining': 1,
         'plotLoss': True,
         'plotWorstBestPrediction': True,
-        'plotAllPredictions': True,
+        'plotAllPredictions': False,
 
         #Data parameters
         'priceArea' : 'SE1',
@@ -171,7 +187,7 @@ if __name__ == "__main__":
         'dropout2': 0.001,
         'dropout3': 0.001,
         'batch_size': 32,
-        'epochs': 1000,
+        'epochs': 2,
         'learningRate': 0.0001,
         'lossMetric' :'mae',
         'patience': 200
@@ -181,4 +197,5 @@ if __name__ == "__main__":
     _mlp = MLP_class(**parameters)
     _mlp.mlpPredict()
     _mlp.mlpEvaluate()
+    _mlp.mlpSave()
     print("*****------------MLP FINISHED------------******\n")
