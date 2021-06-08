@@ -83,20 +83,21 @@ class MLP_class():
         #First layer
         model.add(Dense(self.n_hidden1, input_dim=n_features))
         model.add(BatchNormalization())
-        model.add(Activation('relu'))
         model.add(Dropout(self.dropout1))
+        model.add(Activation('relu'))
         
         #Second layer
         model.add(Dense(self.n_hidden2))
         model.add(BatchNormalization())
-        model.add(Activation('relu'))
         model.add(Dropout(self.dropout2))
+        model.add(Activation('relu'))
 
         #Third layer
         model.add(Dense(self.n_hidden3))
         model.add(BatchNormalization())
         model.add(Activation('relu'))
         model.add(Dropout(self.dropout3))
+
 
         #Output layer
         model.add(Dense(n_output))
@@ -151,6 +152,9 @@ class MLP_class():
             "NH1": self.n_hidden1,
             "NH2": self.n_hidden2,
             "NH3": self.n_hidden3,
+            "DROP1": self.dropout1,
+            "DROP2": self.dropout2,
+            "DROP3": self.dropout3,
             "EPOCHS": self.epochs,
             "BS": self.batch_size,
             "LR": self.learningRate,
@@ -176,19 +180,19 @@ if __name__ == "__main__":
         #Data parameters
         'priceArea' : 'SE1',
         'targetName' : 'SE1-price',
-        'dailySequence': False,
-        'weeklySequence': True,
+        'dailySequence': True,
+        'weeklySequence': False,
 
         #Network/training parameters
-        'n_hidden1': 512,
-        'n_hidden2': 128,
-        'n_hidden3': 64,
-        'dropout1': 0.3,
-        'dropout2': 0.1,
-        'dropout3': 0.1,
+        'n_hidden1': 1024,
+        'n_hidden2': 512,
+        'n_hidden3': 512,
+        'dropout1': 0.5,
+        'dropout2': 0.3,
+        'dropout3': 0.3,
         'batch_size': 64,
-        'epochs': 800,
-        'learningRate': 0.01,
+        'epochs': 900,
+        'learningRate': 0.001,
         'lossMetric' :'mae',
         'patience': 300
    

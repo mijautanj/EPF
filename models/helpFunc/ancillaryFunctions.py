@@ -33,7 +33,7 @@ def minMaxLoss(testMAE, k=2):
 
 
 def saveModel(dataDict, targetName, modelName, indicesMin, indicesMax, errors, finalValLoss, paramDict):
-    modelstring = modelName + "_" + str(round(finalValLoss, 6))
+    modelstring = modelName + "_" + str(round(errors["test_smape"], 6))
     for key, value in paramDict.items():
         modelstring += "__" + str(key) + "_" + str(value)
 

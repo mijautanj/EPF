@@ -92,7 +92,7 @@ class CNN_class():
 
         #Convolutional layer 1
         model.add(Conv1D(self.n_hidden1, kernel_size=3, padding='same', input_shape=(n_steps, n_features)))
-        #model.add(Dropout(self.dropout1))
+        model.add(Dropout(self.dropout1))
         model.add(BatchNormalization())
         model.add(Activation('relu'))
         model.add(MaxPooling1D(pool_size=2)) #, strides=2))
@@ -100,7 +100,7 @@ class CNN_class():
     
         #Convolutional layer 2
         model.add(Conv1D(self.n_hidden2, kernel_size=3, padding='same'))
-        #model.add(Dropout(self.dropout2))
+        model.add(Dropout(self.dropout2))
         model.add(BatchNormalization())
         model.add(Activation('relu'))
         model.add(MaxPooling1D(pool_size=2)) #, strides=2))
@@ -108,7 +108,7 @@ class CNN_class():
 
         #Convolutional layer 3
         model.add(Conv1D(self.n_hidden3, kernel_size=3, padding='same'))
-        #model.add(Dropout(self.dropout3))
+        model.add(Dropout(self.dropout3))
         model.add(BatchNormalization())
         model.add(Activation('relu'))
         model.add(MaxPooling1D(pool_size=2)) #, strides=2))
@@ -202,11 +202,11 @@ if __name__ == "__main__":
 
         #Network/training parameters
         'n_hidden1': 64,
-        'n_hidden2': 64,
-        'n_hidden3': 64,
-        'dropout1': 0.1,
-        'dropout2': 0.1,
-        'dropout3': 0.1,
+        'n_hidden2': 128,
+        'n_hidden3': 256,
+        'dropout1': 0.3,
+        'dropout2': 0.3,
+        'dropout3': 0.3,
         'batch_size': 64,
         'epochs': 800,
         'learningRate': 0.001,
