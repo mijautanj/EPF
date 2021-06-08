@@ -33,11 +33,12 @@ def plotWorstBest(dataDict, targetName, modelName, minIndeces, maxIndeces):
 
 #A function to load models and plot best and worst
 if __name__ == "__main__":
-    modelstring = "MLP_17.979562__NH1_1024__NH2_1024__NH3_512__DROP1_0.3__DROP2_0.3__DROP3_0.3__EPOCHS_1200__BS_64__LR_0.001__PAT_300__DAY_False__WEEK_True"
+    modelstring = "MLP_17.344015__NH1_1024__NH2_512__NH3_512__DROP1_0.5__DROP2_0.3__DROP3_0.3__EPOCHS_1300__BS_64__LR_0.001__PAT_300__DAY_True__WEEK_False"
     
     file = open("./savedModels/" + modelstring + ".pkl", "rb")
     output = pickle.load(file)
     print("FINAL VALLOSS", output["finalValLoss"])
     print("TEST sMAPE", output["errors"]["test_smape"] )
+    print("ERROR", output["errors"] )
     plotWorstBest(output["dataDict"], output["targetName"], output["modelName"], 
         output["indicesMin"], output["indicesMax"])
