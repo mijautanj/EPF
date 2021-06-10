@@ -44,7 +44,7 @@ def plotWorstBest(dataDict, targetName, modelName, minIndeces, maxIndeces):
 
 #A function to load models and plot best and worst
 if __name__ == "__main__":
-    modelstring = "MLP_15.783148__NH1_1024__NH2_1024__NH3_512__DROP1_0.3__DROP2_0.3__DROP3_0.3__EPOCHS_1500__BS_64__LR_0.001__PAT_300__DAY_False__WEEK_True"
+    modelstring = "LSTM_13.384791__NH1_64__NH2_64__DROP1_0.3__DROP2_0.3__EPOCHS_1400__BS_64__LR_0.001__PAT_300__DAY_False__WEEK_True"
     
     file = open(modelstring + ".pkl", "rb")
     output = pickle.load(file)
