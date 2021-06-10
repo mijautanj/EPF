@@ -23,6 +23,7 @@ class CNN_class():
                  n_hidden1, 
                  n_hidden2,
                  n_hidden3,
+                 fullyConn,
                  dropout1,
                  dropout2,
                  dropout3,
@@ -48,6 +49,7 @@ class CNN_class():
         self.n_hidden1 = n_hidden1
         self.n_hidden2 = n_hidden2
         self.n_hidden3 = n_hidden3
+        self.fullyConn = fullyConn
         self.dropout1 = dropout1
         self.dropout2 = dropout2
         self.dropout3 = dropout3
@@ -116,8 +118,8 @@ class CNN_class():
 
         # Fully connected 
         model.add(Flatten())
-        model.add(Dense(64, activation = 'relu'))
-
+        model.add(Dense(self.fullyConn, activation = 'relu'))
+        model.add(BatchNormalization())
         # Output 
         model.add(Dense(n_output))
         opt = Adam(learning_rate=self.learningRate)
@@ -170,7 +172,10 @@ class CNN_class():
             "NH1": self.n_hidden1,
             "NH2": self.n_hidden2,
             "NH3": self.n_hidden3,
-            "FullyConnected": 64,
+            "FC": self.fullyConn,
+            "DROP1": self.dropout1,
+            "DROP2": self.dropout2,
+            "DROP3": self.dropout3,
             "EPOCHS": self.epochs,
             "BS": self.batch_size,
             "LR": self.learningRate,
@@ -197,18 +202,19 @@ if __name__ == "__main__":
         #Data parameters
         'priceArea' : 'SE1',
         'targetName' : 'SE1-price',
-        'dailySequence': False,
-        'weeklySequence': True,
+        'dailySequence': True,
+        'weeklySequence': False,
 
         #Network/training parameters
-        'n_hidden1': 64,
-        'n_hidden2': 128,
-        'n_hidden3': 256,
-        'dropout1': 0.3,
-        'dropout2': 0.3,
-        'dropout3': 0.3,
+        'n_hidden1': 128, #TODO testa med 32 i först och kanske 128/252 i andra tredje
+        'n_hidden2': 512,
+        'n_hidden3': 512,
+        'fullyConn': 64,
+        'dropout1': 0,
+        'dropout2': 0,
+        'dropout3': 0,
         'batch_size': 64,
-        'epochs': 800,
+        'epochs': 500,
         'learningRate': 0.001,
         'lossMetric' :'mae',
         'patience': 300

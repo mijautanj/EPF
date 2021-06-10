@@ -176,7 +176,7 @@ if __name__ == "__main__":
         'dropout1': 0.3,
         'dropout2': 0.3,
         'batch_size': 64,
-        'epochs': 1000,
+        'epochs': 1400,
         'learningRate': 0.001,
         'lossMetric' :'mae',
         'patience': 300

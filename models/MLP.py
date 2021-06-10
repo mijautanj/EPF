@@ -180,8 +180,8 @@ if __name__ == "__main__":
         #Data parameters
         'priceArea' : 'SE1',
         'targetName' : 'SE1-price',
-        'dailySequence': True,
-        'weeklySequence': False,
+        'dailySequence': False,
+        'weeklySequence': True,
 
         #Network/training parameters
         'n_hidden1': 1024,
@@ -191,7 +191,7 @@ if __name__ == "__main__":
         'dropout2': 0.3,
         'dropout3': 0.3,
         'batch_size': 64,
-        'epochs': 900,
+        'epochs': 1200,
         'learningRate': 0.001,
         'lossMetric' :'mae',
         'patience': 300

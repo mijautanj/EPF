@@ -62,7 +62,7 @@ def selectYears(df,start,end):
 
 def oneColData(df):
     newdf = pd.DataFrame(df.iloc[:,0:2]) #Only use DateTime and variable columns
-    newdf.rename(columns={newdf.columns[1]: df['Stationsnamn'][1] }, inplace = True ) #Renaming "StationName" to actuall station name
+    newdf.rename(columns={newdf.columns[1]: df['Stationsnamn'][1] }, inplace = True ) #Renaming "StationName" to actual station name
     return newdf
 
 
@@ -75,5 +75,3 @@ def SMHI_API_func(URL):
     return df
 
 
-URL = 'https://opendata-download-metobs.smhi.se/api/version/1.0/parameter/1/station/98230/period/corrected-archive/data.csv'
-SMHI_API_func(URL)
