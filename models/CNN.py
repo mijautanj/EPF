@@ -206,21 +206,22 @@ if __name__ == "__main__":
         'weeklySequence': False,
 
         #Network/training parameters
-        'n_hidden1': 128, #TODO testa med 32 i först och kanske 128/252 i andra tredje
-        'n_hidden2': 512,
+        'n_hidden1': 64, #TODO testa med 32 i först och kanske 128/252 i andra tredje
+        'n_hidden2': 256,
         'n_hidden3': 512,
         'fullyConn': 64,
         'dropout1': 0,
         'dropout2': 0,
         'dropout3': 0,
         'batch_size': 64,
-        'epochs': 500,
+        'epochs': 1400,
         'learningRate': 0.001,
         'lossMetric' :'mae',
         'patience': 300
    
     }
 
+   
     _cnn = CNN_class(**parameters)
     _cnn.cnnPredict()
     _cnn.cnnEvaluate()
