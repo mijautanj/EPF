@@ -4,7 +4,7 @@ from statsmodels.tsa.stattools import adfuller
 import warnings
 warnings.filterwarnings("ignore")
 
-from helpFunc.ancillaryFunctions import evaluate, minMaxLoss
+from helpFunc.ancillaryFunctions import evaluate, minMaxLoss, saveModel
 from helpFunc.plots import plotWorstBest, plotAllPred
 from helpFunc.sequenceData import obtainDataDict
 
@@ -27,12 +27,15 @@ def prediction(dataDict):
     return dataDict
 
 
+def arimaSave(dataDict, targetName, modelName, indicesMin, indicesMax,errors,finalValLoss, paramDict):
+    saveModel(dataDict, targetName, modelName, indicesMin, indicesMax, errors, finalValLoss, paramDict)
+
 if __name__ == "__main__":
     print("*****------------Running ARIMA-------------******\n")
     #----------------Specifying pricearea------------
     PRICEAREA = 'SE1'
     TARGETNAME = 'SE1-price'
-    df, dataDict, targetScaler = obtainDataDict(PRICEAREA, TARGETNAME, weeklySequence=False, dailySequence=True)
+    df, dataDict, targetScaler = obtainDataDict(PRICEAREA, TARGETNAME, weeklySequence=True, dailySequence=False)
     
     #Checking if timeseries stationary:
     #ad_test(df[TARGETNAME])
@@ -49,6 +52,9 @@ if __name__ == "__main__":
         plotWorstBest(newDataDict,TARGETNAME,"ARIMA",indicesMin,indicesMax)
     if plotAllPredictions:
         plotAllPred(newDataDict,TARGETNAME,"ARIMA")
+    
+
+    arimaSave(newDataDict, TARGETNAME, "ARIMA", 0, 0, errors,0, {})
 
 
     print("*****------------ARIMA FINISHED------------******\n")
