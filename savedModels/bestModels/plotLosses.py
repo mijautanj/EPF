@@ -16,10 +16,10 @@ def plotLoss(lstmLoss,cnnLoss,mlpLoss):
         "LSTM": lstmLoss,
         "CNN": cnnLoss,        
     }
-    df =  pd.DataFrame(data)
+    df =  pd.DataFrame(data, columns=["MLP","LSTM","CNN"])
     df.index.name = 'TEST SAMPLE'
     print(df)
-    sns.set(style='ticks', context='talk')
+    #sns.set(style='ticks', context='talk')
   
 
     #colors=['#FF8600','#27187E','#246A73']
@@ -28,7 +28,7 @@ def plotLoss(lstmLoss,cnnLoss,mlpLoss):
 
     ax = sns.swarmplot(data=df)
     sns.set(font_scale=2)
-    ax.set(ylabel='MAE', title="Swarmplot for test loss of each model")
+    ax.set(ylabel='MAE', title="Swarm plot for test loss of each model")
     plt.tight_layout() 
     plt.savefig('losses-snsDAY.png')
     
@@ -70,10 +70,10 @@ def plotAllTestLosses(lstmTestTarget, cnnTestTarget, mlpTestTarget):
     totalLoss = np.array(lstmLoss)+np.array(cnnLoss)+np.array(mlpLoss)
     maxIdx = np.argmax(totalLoss)
     minIdx = np.argmin(totalLoss)
-    plotPred(lstmTestTarget[maxIdx], cnnTestTarget[maxIdx], mlpTestTarget[maxIdx], "Worst")
-    plotPred(lstmTestTarget[minIdx], cnnTestTarget[minIdx], mlpTestTarget[minIdx], "Best")
+    #plotPred(lstmTestTarget[maxIdx], cnnTestTarget[maxIdx], mlpTestTarget[maxIdx], "Worst")
+    #plotPred(lstmTestTarget[minIdx], cnnTestTarget[minIdx], mlpTestTarget[minIdx], "Best")
     
-    plotLoss(lstmTestTarget, cnnTestTarget, mlpTestTarget)
+    plotLoss(lstmLoss, cnnLoss, mlpLoss)
 
     
 
@@ -81,12 +81,12 @@ def plotAllTestLosses(lstmTestTarget, cnnTestTarget, mlpTestTarget):
 
 #A function to load models and plot best and worst
 if __name__ == "__main__":
-    lstmString = "LSTM_13.384791__NH1_64__NH2_64__DROP1_0.3__DROP2_0.3__EPOCHS_1400__BS_64__LR_0.001__PAT_300__DAY_False__WEEK_True"
-    cnnString = "CNN_14.282786__NH1_64__NH2_256__NH3_512__FC_64__DROP1_0__DROP2_0__DROP3_0__EPOCHS_1400__BS_64__LR_0.001__PAT_300__DAY_False__WEEK_True"
-    mlpString = "MLP_15.640279__NH1_1024__NH2_512__NH3_512__DROP1_0.5__DROP2_0.3__DROP3_0.3__EPOCHS_1200__BS_64__LR_0.001__PAT_300__DAY_False__WEEK_True"
+    lstmString = "LSTM_0.015264__NH1_64__NH2_64__DROP1_0.3__DROP2_0.3__EPOCHS_800__BS_64__LR_0.001__PAT_300__DAY_True__WEEK_False"
+    cnnString = "CNN_19.65366__NH1_64__NH2_256__NH3_512__FC_64__DROP1_0__DROP2_0__DROP3_0__EPOCHS_1400__BS_64__LR_0.001__PAT_300__DAY_True__WEEK_False"
+    mlpString = "MLP_17.344015__NH1_1024__NH2_512__NH3_512__DROP1_0.5__DROP2_0.3__DROP3_0.3__EPOCHS_1300__BS_64__LR_0.001__PAT_300__DAY_True__WEEK_False"
 
-    lstmResult = pickle.load(open("./week/" + lstmString + ".pkl", "rb"))
-    cnnResult = pickle.load(open("./week/" + cnnString + ".pkl", "rb"))
-    mlpResult = pickle.load(open("./week/" + mlpString + ".pkl", "rb"))
+    lstmResult = pickle.load(open("./day/" + lstmString + ".pkl", "rb"))
+    cnnResult = pickle.load(open("./day/" + cnnString + ".pkl", "rb"))
+    mlpResult = pickle.load(open("./day/" + mlpString + ".pkl", "rb"))
 
     plotAllTestLosses(lstmResult["dataDict"]["test"][1], cnnResult["dataDict"]["test"][1], mlpResult["dataDict"]["test"][1])
