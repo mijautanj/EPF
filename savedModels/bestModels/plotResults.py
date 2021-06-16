@@ -87,9 +87,10 @@ def plotResults(lstmTestTarget, cnnTestTarget, mlpTestTarget, plotAllLosses=True
         plotSeveralPred(lstmTestTarget[maxIdx], cnnTestTarget[maxIdx], mlpTestTarget[maxIdx], "Worst")
         plotSeveralPred(lstmTestTarget[minIdx], cnnTestTarget[minIdx], mlpTestTarget[minIdx], "Best")
     
-    random.seed(10) #SKITBRA!!!
-    #random.seed(77) #SKITBRA!!!
-    
+    #random.seed(10) #SKITBRA!!!
+    random.seed(77) #SKITBRA!!!
+    #random.seed(6) #helt ok
+    #random.seed(14)
     if plotRandom:
         targets = {"LSTM": lstmTestTarget, "CNN": cnnTestTarget}
         for key, value in targets.items():
